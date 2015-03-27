@@ -1,2 +1,2 @@
 # tq1-logger
-TQ1 node.js log wapper to winstonjs
+TQ1 node.js log wrapper to winstonjs
