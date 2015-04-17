@@ -41,8 +41,6 @@ class Logger
       logger.debug.apply logger, @_formatArgs(arguments)
     mainConsole.info = () =>
       logger.info.apply logger, @_formatArgs(arguments)
-    mainConsole.debug = () =>
-      logger.debug.apply logger, @_formatArgs(arguments)
     mainConsole.warn = () =>
       logger.warn.apply logger, @_formatArgs(arguments)
     mainConsole.error = () =>

@@ -9,15 +9,14 @@ TQ1 node.js log wrapper to winstonjs
 ```javascript
 require('tq1-logger')(<logger level>, console)
 ```
-3. Use `console.<level>("text to print")` to print to console
 
 
 ## Levels
 tq1-logger implements four levels for console logs.
 
-Level             | Color   | Description
-------------------|---------|------------------------------------
-`debug`           | blue    | Includes all levels. `console.log` is printed using this level
-`info`            | green   | Also includes warn and error levels
-`warn`            | yellow  | Includes `warn` and `error` levels
-`error`           | red     | Only print `error` level logs
+Level             | Color   | Usage                   | Description
+------------------|---------|-------------------------|------------------------------
+`debug`           | blue    | `console.log("text")`   | Includes all levels
+`info`            | green   | `console.info("text")`  | Also includes warn and error levels
+`warn`            | yellow  | `console.warn("text")`  | Includes `warn` and `error` levels
+`error`           | red     | `console.error("text")` | Only print `error` level logs
