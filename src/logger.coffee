@@ -38,7 +38,7 @@ class Logger
     logger = new winston.Logger transports: [new winston.transports.Console consoleConfig]
 
     mainConsole.log = () =>
-      logger.info.apply logger, @_formatArgs(arguments)
+      logger.debug.apply logger, @_formatArgs(arguments)
     mainConsole.info = () =>
       logger.info.apply logger, @_formatArgs(arguments)
     mainConsole.debug = () =>
