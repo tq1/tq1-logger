@@ -6,29 +6,36 @@ stripAnsi = require('strip-ansi')
 
 class Logger
 
-  @startLogger: (loggerLevel, mainConsole) ->
+  @startLogger: (options, mainConsole) ->
 
-    log4js.configure({
-      "appenders": [
-        {
-          type: "console",
-          category: "TQ1 - Analytics"
-        },
-        {
-          "host": "192.168.59.103",
-          "port": 28777,
-          "type": "logstashUDP",
-          "layout": {
-            "type": "pattern",
-            "pattern": "%m"
+    logCategory = if options.name? then options.name else "TQ1 - Logs"
+
+    if options.logstashHost? and options.logstashPort? and options.name?
+      log4js.configure({
+        "appenders": [
+          {
+            type: "console",
+            category: logCategory
           },
-          "category": "TQ1 - Analytics"
-        }
-      ]
-    });
+          {
+            host: options.logstashHost,
+            port: options.logstashPort,
+            type: "logstashUDP",
+            layout: {
+              type: "pattern",
+              pattern: "%m"
+            },
+            category: logCategory
+          }
+        ]
+      })
 
-    logger = log4js.getLogger('TQ1 - Analytics');
-    logger.setLevel('DEBUG');
+    logger = log4js.getLogger(logCategory)
+
+    if options.logLevel?
+      logger.setLevel(options.logLevel)
+    else
+      logger.setLevel('DEBUG')
 
     mainConsole.log = () =>
       logger.debug stripAnsi(arguments[0])
