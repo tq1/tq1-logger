@@ -1,16 +1,13 @@
 {
   "name": "tq1-logger",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "TQ1 Logger Utility",
   "author": "Taqtile",
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
   "dependencies": {
     "moment-timezone": "0.3.0",
     "colors": "1.0.3",
-    "winston": "0.9.0"
+    "log4js": "0.6.26",
+    "strip-ansi": "3.0.0"
   },
   "devDependencies": {
     "coffee-script": "1.9.1",

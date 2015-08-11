@@ -1,54 +1,43 @@
-winston = require('winston')
 moment = require('moment-timezone')
 colors = require('colors')
 util = require('util')
+log4js = require('log4js')
+stripAnsi = require('strip-ansi')
 
 class Logger
 
   @startLogger: (loggerLevel, mainConsole) ->
 
-    logFormatter = (options) ->
-      return "[" + options.timestamp() + "][" + colorizeLevel(options.level.toUpperCase()) + "]: " +
-      (if options.message isnt undefined then options.message else '') + ' ' +
-      (if options.meta and Object.keys(options.meta).length > 0 then '' + JSON.stringify(options.meta) else '')
+    log4js.configure({
+      "appenders": [
+        {
+          type: "console",
+          category: "TQ1 - Analytics"
+        },
+        {
+          "host": "192.168.59.103",
+          "port": 28777,
+          "type": "logstashUDP",
+          "layout": {
+            "type": "pattern",
+            "pattern": "%m"
+          },
+          "category": "TQ1 - Analytics"
+        }
+      ]
+    });
 
-    customTimestamp = () ->
-      return moment().toString()
-
-    colorizeLevel = (level) ->
-      switch level
-        when 'DEBUG' then return level.blue
-        when 'INFO' then return level.green
-        when 'WARN' then return level.yellow
-        when 'ERROR' then return level.red
-
-    consoleConfig =
-      level: {}
-      colorize: true
-      prettyPrint: true
-      timestamp: customTimestamp
-      formatter: logFormatter
-
-    switch loggerLevel
-      when 'debug' then consoleConfig.level = 'debug'
-      when 'info' then consoleConfig.level = 'info'
-      when 'warn' then consoleConfig.level = 'warn'
-      when 'error' then consoleConfig.level = 'error'
-
-    logger = new winston.Logger transports: [new winston.transports.Console consoleConfig]
+    logger = log4js.getLogger('TQ1 - Analytics');
+    logger.setLevel('DEBUG');
 
     mainConsole.log = () =>
-      logger.debug.apply logger, @_formatArgs(arguments)
+      logger.debug stripAnsi(arguments[0])
     mainConsole.info = () =>
-      logger.info.apply logger, @_formatArgs(arguments)
+      logger.info stripAnsi(arguments[0])
     mainConsole.warn = () =>
-      logger.warn.apply logger, @_formatArgs(arguments)
+      logger.warn stripAnsi(arguments[0])
     mainConsole.error = () =>
-      logger.error.apply logger, @_formatArgs(arguments)
-
-
-  @_formatArgs: (args) ->
-    return [util.format.apply(util.format, Array.prototype.slice.call(args))]
+      logger.error stripAnsi(arguments[0])
 
 
 module.exports = Logger
