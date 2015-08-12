@@ -12,17 +12,17 @@ class Logger
 
     if options.logstashHost? and options.logstashPort? and options.name?
       log4js.configure({
-        "appenders": [
+        appenders: [
           {
-            type: "console",
+            type: "console"
             category: logCategory
           },
           {
-            host: options.logstashHost,
-            port: options.logstashPort,
-            type: "logstashUDP",
+            host: options.logstashHost
+            port: options.logstashPort
+            type: "logstashUDP"
             layout: {
-              type: "pattern",
+              type: "pattern"
               pattern: "%m"
             },
             category: logCategory
