@@ -10,8 +10,6 @@ class Logger
 
     log_category = if options.name? then options.name else "TQ1 - Logs"
 
-    log_message =
-
     if options.logstash_host? and options.logstash_port? and options.name?
       log4js.configure({
         appenders: [
