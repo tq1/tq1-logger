@@ -15,7 +15,7 @@ require('tq1-logger')(<options>, console)
 
 Options parameter is an object that will be passed with the following keys/values:
 
-###logLevel
+### log_level
 
 tq1-logger implements four levels for console logs. Use the logLevel key with one of the following values:
 
@@ -28,29 +28,31 @@ Level             | Color   | Usage                   | Description
 
 Default value is `DEBUG`.
 
-###name
+### name
 
 The name of your application. This will be printed with the logs and can be used to identify the log source.
 
-The next keys should be added if [Logstash](https://www.elastic.co/products/logstash) integration is desired.
+### Logstash Integration Options
 
-###logstashHost
+The next keys are **required** if [Logstash](https://www.elastic.co/products/logstash) integration is desired.
+
+#### logstash_host
 
 This version supports Logstash integration using UDP input ([click here](https://github.com/nomiddlename/log4js-node/blob/master/examples/logstashUDP.js) for an example configuration). The logstashHost value should contain the address of your logstash host.
 
-###logstashPort
+#### logstash_port
 
 The port (string) used by Logstash in your Logstash host.
 
-##Example
+## Example
 
 Here is an example of how you can initiate the logger on CoffeeScript:
 
 ```javascript
 options:
-  logLevel: 'DEBUG'
-  logstashHost: '127.0.0.1'
-  logstashPort: '9999'
+  log_level: 'DEBUG'
+  logstash_host: '127.0.0.1'
+  logstash_port: '9999'
   name: 'Example Application'
 
 require('tq1-logger') options, console

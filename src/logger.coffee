@@ -6,44 +6,48 @@ stripAnsi = require('strip-ansi')
 
 class Logger
 
-  @startLogger: (options, mainConsole) ->
+  @start_logger: (options, main_console) ->
 
-    logCategory = if options.name? then options.name else "TQ1 - Logs"
+    log_category = if options.name? then options.name else "TQ1 - Logs"
 
-    if options.logstashHost? and options.logstashPort? and options.name?
+    log_message =
+
+    if options.logstash_host? and options.logstash_port? and options.name?
       log4js.configure({
         appenders: [
           {
             type: "console"
-            category: logCategory
+            category: log_category
           },
           {
-            host: options.logstashHost
-            port: options.logstashPort
+            host: options.logstash_host
+            port: options.logstash_port
             type: "logstashUDP"
             layout: {
               type: "pattern"
               pattern: "%m"
             },
-            category: logCategory
+            category: log_category
           }
         ]
       })
 
-    logger = log4js.getLogger(logCategory)
+    logger = log4js.getLogger(log_category)
 
-    if options.logLevel?
-      logger.setLevel(options.logLevel)
+    if options.log_level?
+      logger.setLevel(options.log_level)
     else
       logger.setLevel('DEBUG')
 
-    mainConsole.log = () =>
-      logger.debug stripAnsi(arguments[0])
-    mainConsole.info = () =>
+    logger.debug JSON.stringify arguments
+
+    main_console.log = () =>
+      logger.debug stripAnsi(arguments[0]) #We're just interested in the log message, that is the first argument
+    main_console.info = () =>
       logger.info stripAnsi(arguments[0])
-    mainConsole.warn = () =>
+    main_console.warn = () =>
       logger.warn stripAnsi(arguments[0])
-    mainConsole.error = () =>
+    main_console.error = () =>
       logger.error stripAnsi(arguments[0])
 
 
