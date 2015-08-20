@@ -1,4 +1,4 @@
 var logger = require('./src/logger');
-module.exports = (function(level, mainConsole){
-  logger.startLogger(level, mainConsole);
+module.exports = (function(options, main_console){
+  logger.start_logger(options, main_console);
 });

@@ -1,54 +1,52 @@
-winston = require('winston')
 moment = require('moment-timezone')
 colors = require('colors')
 util = require('util')
+log4js = require('log4js')
+stripAnsi = require('strip-ansi')
 
 class Logger
 
-  @startLogger: (loggerLevel, mainConsole) ->
+  @start_logger: (options, main_console) ->
 
-    logFormatter = (options) ->
-      return "[" + options.timestamp() + "][" + colorizeLevel(options.level.toUpperCase()) + "]: " +
-      (if options.message isnt undefined then options.message else '') + ' ' +
-      (if options.meta and Object.keys(options.meta).length > 0 then '' + JSON.stringify(options.meta) else '')
+    log_category = if options.name? then options.name else "TQ1 - Logs"
 
-    customTimestamp = () ->
-      return moment().toString()
+    if options.logstash_host? and options.logstash_port? and options.name?
+      log4js.configure({
+        appenders: [
+          {
+            type: "console"
+            category: log_category
+          },
+          {
+            host: options.logstash_host
+            port: options.logstash_port
+            type: "logstashUDP"
+            layout: {
+              type: "pattern"
+              pattern: "%m"
+            },
+            category: log_category
+          }
+        ]
+      })
 
-    colorizeLevel = (level) ->
-      switch level
-        when 'DEBUG' then return level.blue
-        when 'INFO' then return level.green
-        when 'WARN' then return level.yellow
-        when 'ERROR' then return level.red
+    logger = log4js.getLogger(log_category)
 
-    consoleConfig =
-      level: {}
-      colorize: true
-      prettyPrint: true
-      timestamp: customTimestamp
-      formatter: logFormatter
+    if options.log_level?
+      logger.setLevel(options.log_level)
+    else
+      logger.setLevel('DEBUG')
 
-    switch loggerLevel
-      when 'debug' then consoleConfig.level = 'debug'
-      when 'info' then consoleConfig.level = 'info'
-      when 'warn' then consoleConfig.level = 'warn'
-      when 'error' then consoleConfig.level = 'error'
+    logger.debug JSON.stringify arguments
 
-    logger = new winston.Logger transports: [new winston.transports.Console consoleConfig]
-
-    mainConsole.log = () =>
-      logger.debug.apply logger, @_formatArgs(arguments)
-    mainConsole.info = () =>
-      logger.info.apply logger, @_formatArgs(arguments)
-    mainConsole.warn = () =>
-      logger.warn.apply logger, @_formatArgs(arguments)
-    mainConsole.error = () =>
-      logger.error.apply logger, @_formatArgs(arguments)
-
-
-  @_formatArgs: (args) ->
-    return [util.format.apply(util.format, Array.prototype.slice.call(args))]
+    main_console.log = () =>
+      logger.debug stripAnsi(arguments[0]) #We're just interested in the log message, that is the first argument
+    main_console.info = () =>
+      logger.info stripAnsi(arguments[0])
+    main_console.warn = () =>
+      logger.warn stripAnsi(arguments[0])
+    main_console.error = () =>
+      logger.error stripAnsi(arguments[0])
 
 
 module.exports = Logger
